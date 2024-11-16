@@ -1,12 +1,11 @@
 #include "smartconfig.h"
 #include "main.h"
-#include <Ticker.h>
 #include <WiFi.h>
 
 static void startSmartConfig(void);
 static void exitSmartConfig(void);
 
-Ticker ticker;
+
 
 static bool smartConfigFlag = false; // flag trạng thái smart config
 
@@ -32,6 +31,7 @@ void smartConfig_Proc(void)
         Serial.println("WiFi Connected.");
         Serial.print("IP Address: ");
         Serial.println(WiFi.localIP());
+        LED_OFF();
         // Blynk.begin(auth,ssid,pass);        // Khởi tạo kết nối tới Blynk bằng token xác thực và thông tin Wifi
     }
     else if (WiFi.status() != WL_CONNECTED && !smartConfigFlag)
