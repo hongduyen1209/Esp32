@@ -10,7 +10,7 @@
 #include "smartconfig.h"
 #include "blynk.h"
 
-extern bool longPress(void);
+extern int longPress(void);
 extern void tick(void);
 
 extern Ticker ticker;

@@ -6,8 +6,11 @@ Ticker ticker;
 
 void setup()
 {
+  pinMode(PIN_LED, OUTPUT);
+  pinMode(PIN_BUTTON, INPUT);
+
   Serial.begin(115200);
-  // bluetooth_Setup();
+  bluetooth_Setup();
   smartConfig_Setup();
   Serial.println(WiFi.SSID());
   Serial.println(WiFi.psk());
@@ -54,21 +57,48 @@ void setup()
 
 void loop()
 {
-
-  smartConfig_Proc();
+  Serial.println(longPress());
+  if (longPress() == 1)
+  {
+    smartConfig_Setup();
+  }
+  else if (longPress() == 2)
+  {
+    blueToothFlag = true;
+    bluetooth_Setup();
+  }
+  if (smartConfigFlag)
+  {
+    smartConfig_Proc();
+  }
+  if (blueToothFlag)
+  {
+    bluetooth_Proc();
+  }
 }
 
 // put function definitions here:
 
-bool longPress(void) // kiểm tra nhấn nút 3s
+int longPress(void) // kiểm tra nhấn nút 3s
 {
   static int lastPress = 0;
-  if (millis() - lastPress > 3000 && digitalRead(PIN_BUTTON) == 0)
+  static uint16_t interval = 0;
+  if (digitalRead(PIN_BUTTON) == 0)
   {
-    return true;
+    interval = millis() - lastPress;
   }
   else if (digitalRead(PIN_BUTTON) == 1)
   {
+    if (interval > 8000)
+    {
+      interval = 0;
+      return 2;
+    }
+    else if (interval > 3000)
+    {
+      interval = 0;
+      return 2;
+    }
     lastPress = millis();
   }
   return false;

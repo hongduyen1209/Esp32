@@ -5,22 +5,16 @@
 static void startSmartConfig(void);
 static void exitSmartConfig(void);
 
-
-
-static bool smartConfigFlag = false; // flag trạng thái smart config
+bool smartConfigFlag = false; // flag trạng thái smart config
 
 void smartConfig_Setup(void)
 {
-    pinMode(PIN_LED, OUTPUT);
-    pinMode(PIN_BUTTON, INPUT);
+    startSmartConfig();
 }
 
 void smartConfig_Proc(void)
 {
-    if (longPress())
-    {
-        startSmartConfig();        
-    }
+
     // Thoát chế độ Smart Config sau khi kết nối tới Wifi
     if (WiFi.status() == WL_CONNECTED && smartConfigFlag && WiFi.smartConfigDone())
     {
@@ -32,6 +26,7 @@ void smartConfig_Proc(void)
         Serial.print("IP Address: ");
         Serial.println(WiFi.localIP());
         LED_OFF();
+        WiFi.begin();
         // Blynk.begin(auth,ssid,pass);        // Khởi tạo kết nối tới Blynk bằng token xác thực và thông tin Wifi
     }
     else if (WiFi.status() != WL_CONNECTED && !smartConfigFlag)
@@ -43,7 +38,6 @@ void smartConfig_Proc(void)
     }
 }
 
-
 static void startSmartConfig(void) // bật chế độ smart config
 {
     if (smartConfigFlag == false)
@@ -51,6 +45,7 @@ static void startSmartConfig(void) // bật chế độ smart config
         Serial.println("Start SmartConfig.");
         smartConfigFlag = true;
         ticker.attach(0.3, tick); // LED chớp nhanh
+        WiFi.mode(WIFI_AP_STA);
         WiFi.beginSmartConfig();
     }
 }

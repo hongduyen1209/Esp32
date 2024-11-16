@@ -1,7 +1,7 @@
 #include "BluetoothSerial.h"
 // #include "NimBLEDevice.h"
 BluetoothSerial BT;
-
+bool blueToothFlag = false;
 void bluetooth_Setup(void)
 {
     BT.begin();
@@ -17,15 +17,26 @@ void bluetooth_Setup(void)
     // ads->addServiceUUID("ABCD");
     // ads->start();
 }
-
+char buffer[64];
 void bluetooth_Proc(void)
 {
+    static uint index = 0;
     if (Serial.available())
     {
         BT.write(Serial.read());
     }
     if (BT.available())
     {
-        Serial.write(BT.read()+"\n");
+        buffer[index] = BT.read();
+        if (buffer[index] == 'z')
+        {
+            int i;
+            for (i = 0; i < index; i++)
+            {
+                Serial.println(buffer);
+            }
+
+            index = 0;
+        }
     }
 }
